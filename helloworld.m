@@ -20,6 +20,18 @@ modData = bpskModulator(trans);
 
 % bpsk = carrier.*IQ; %offset bpsk
 % real_bpsk = real(bpsk);
+figure()
 plot(real(modData));
+title('Real part of BPSK modulated data');
+xlabel('Bits');
+
+noisyBPSK = awgn(modData,-10);
+
+bpskDemodulator = comm.BPSKDemodulator;
+demodData = bpskDemodulator(noisyBPSK);
+[numerror,BER] = biterr(trans,demodData);
+
+
+
 
 
