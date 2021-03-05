@@ -5,9 +5,9 @@ clc
 clear 
 close all
 
-n = 5000; % However many numbers you want.
-nbits = int32(randi([0, 1], [1, n]));
-trans = transpose(nbits);
+n = 5000; 
+bits = round(rand(1,n));
+transbits = transpose(bits);
 
 % A = 1;
 % Fc = 40; % Carrier frequency
@@ -15,21 +15,37 @@ trans = transpose(nbits);
 % carrier = A*exp(j*2*pi*(Fc/Fs)*n); %Carrier wave
 % real_carrier = real(carrier);
 
-bpskModulator = comm.BPSKModulator;
-modData = bpskModulator(trans);
+modBPSK = pskmod(transbits,2);
+modQPSK = pskmod(transbits,4);
+mod8_PSK = pskmod(transbits,8);
+mod16_PSK = pskmod(transbits,16);
 
-% bpsk = carrier.*IQ; %offset bpsk
-% real_bpsk = real(bpsk);
-figure()
-plot(real(modData));
-title('Real part of BPSK modulated data');
-xlabel('Bits');
+% figure()
+% plot(real(modBPSK));
+% title('Real part of BPSK modulated data');
+% xlabel('Bits');
 
-noisyBPSK = awgn(modData,-10);
+noisyBPSK = awgn(modBPSK,-10);
+noisyQPSK = awgn(modQPSK,-10);
+noisy8PSK = awgn(mod8_PSK,-10);
+noisy16PSK = awgn(mod16_PSK,-10);
 
-bpskDemodulator = comm.BPSKDemodulator;
-demodData = bpskDemodulator(noisyBPSK);
-[numerror,BER] = biterr(trans,demodData);
+
+demodBPSK = pskdemod(noisyBPSK,2);
+demodQPSK = pskdemod(noisyQPSK,4);
+demod8_PSK = pskdemod(noisy8PSK,8);
+demod16_PSK = pskdemod(noisy16PSK,16);
+[numerrorBPSK,BER_BPSK] = biterr(transbits,demodBPSK);
+[numerrorQPSK,BER_QPSK] = biterr(transbits,demodQPSK);
+[numerror8PSK,BER_8PSK] = biterr(transbits,demod8_PSK);
+[numerror16PSK,BER_16PSK] = biterr(transbits,demod16_PSK);
+
+
+
+
+
+
+
 
 
 
